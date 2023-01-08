@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 class ExampleController extends Controller
 {
     public function homepage(){
-        return '<h1>Homepage!!</h1><a href="/about">Go to About page</a>';
+        // any complexity should be added here in the controller nopt the view which is for outputting html
+        $myName = 'Chloe';
+        $pets = ['Darcy', 'Hector', 'Monty'];
+        // 1st arg is name of view file and 2nd arg - array and can pass any data - associative array which can have multiple values defined
+        return view('homepage', ['allAnimals' => $pets, 'name' => $myName]);
     }
 
     public function aboutPage(){
