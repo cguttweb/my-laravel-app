@@ -8,6 +8,12 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+
+    public function logout(){
+        auth()->logout();
+        return redirect('/')->with('success', 'You are now logged out');
+    }
+
     public function showCorrectHomepage(){
         if (auth()->check()) {
             return view('homepage-feed');
@@ -25,9 +31,9 @@ class UserController extends Controller
         // hashing password - must do this
         $incomingFields['password'] = bcrypt($incomingFields['password']);
 
-        User::create($incomingFields);
-
-        return 'Hello I\'m registered!';
+        $newUser = User::create($incomingFields);
+        auth()->login($newUser);
+        return redirect('/')->with('success', 'Your account has been successfully created');
     }
 
     public function login(Request $request){
@@ -38,9 +44,9 @@ class UserController extends Controller
 
         if (auth()->attempt(['username' => $incomingFields['loginusername'], 'password' => $incomingFields['loginpassword']])) {
             $request->session()->regenerate();
-            return 'It worked';
+            return redirect('/')->with('success', 'You have been successfully logged in');
         } else {
-            return 'Sorry your login failed';
+            return redirect('/')->with('error', 'You failed to log in');
         }
         
     }
