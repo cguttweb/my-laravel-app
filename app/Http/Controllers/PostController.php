@@ -9,10 +9,28 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
 
+    public function showEditForm(Post $post){
+        return view('edit-post', ['post' => $post]);
+    }
+
+    public function updatePost(Post $post, Request $request){
+        $incomingFields = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        
+        $incomingFields['title'] = strip_tags($incomingFields['title']);
+        $incomingFields['body'] = strip_tags($incomingFields['body']);
+
+        $post->update($incomingFields);
+        // users to previous url
+        return back()->with('success', 'post successfully updated');
+    }
+
     public function delete(Post $post){
-        if (auth()->user()->cannot('delete', $post)) {
-            return 'Unable to delete post';
-        }
+        // if (auth()->user()->cannot('delete', $post)) {
+        //     return 'Unable to delete post';
+        // }
         $post->delete();
 
         return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted');
