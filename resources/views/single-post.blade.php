@@ -16,7 +16,8 @@
     </p>
 
     <div class="body-content">
-      <p>{{$post->body}}</p>
+      {{-- !! prevents outputting html e.g. **test** in markdown becomes <strong>test</strong> double curly braces protects --}}
+      <p>{!! $post->body !!}</p>
     </div>
   </div>
 </x-layout>
