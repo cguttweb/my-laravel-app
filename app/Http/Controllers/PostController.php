@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+
+    public function delete(Post $post){
+        if (auth()->user()->cannot('delete', $post)) {
+            return 'Unable to delete post';
+        }
+        $post->delete();
+
+        return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted');
+    }
+
     public function createPost(){
         return view('create-post');
     }
