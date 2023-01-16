@@ -9,6 +9,16 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
 
+    public function storeAvatar(Request $request){
+        // file references the file field name in avatar form
+        $request->file('avatar')->store('public/images');
+        return 'store avatar';
+    }
+
+    public function showAvatarForm(){
+        return view('avatar-form');
+    }
+
     public function profile(User $user){
         //need set out relationship between user and post
         return view('profile-posts', ['username' => $user->username, 'posts' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
