@@ -29,6 +29,7 @@ class UserController extends Controller
 
         $user->avatar = $avatarname;
         $user->save();
+        // php artisan storage:link to setup symbolic link
 
         if ($oldAvatar != "/fallback-avatar.jpg") {
             Storage::delete(str_replace("/storage/", "public/", $oldAvatar));
