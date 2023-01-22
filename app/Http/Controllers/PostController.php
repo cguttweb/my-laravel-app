@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function search($term){
+        // with this missing username and avatar as returning JSON
+        $posts = Post::search($term)->get();
+        // add this to spell things out
+        $posts->load('author:id,username,avatar');
+        return $posts;
+    }
 
     public function showEditForm(Post $post){
         return view('edit-post', ['post' => $post]);
