@@ -5,10 +5,7 @@
     <h2 class="text-center">Latest from your followers</h2>
     <div class="list-group">
       @foreach ($posts as $post)
-      <a href="/post/{{$post->id}}" class="list-group-item list-group-item-action">
-        <img class="avatar-tiny" src="{{$post->author->avatar}}" />
-        <strong>{{$post->title}}</strong> <span class="small"> by {{$post->author->username}} on {{$post->created_at->format('j/n/Y')}}</span>
-      </a>
+        <x-post :post="$post" />
       @endforeach
     </div>
 
