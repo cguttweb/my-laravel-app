@@ -49,6 +49,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function feedPosts(){
+        // 1st arg model end up with, 2nd intermediate data to be looked up 3rd foreign key on intermediate table, 4th = foreign key on final model 5th = local key and 6th = local key on intermediate table
+        return $this->hasManyThrough(Post::class, Follow::class, 'user_id', 'user_id', 'id', 'followeduser');
+    }
+
     public function posts(){
         // user has many posts relationship
         return $this->hasMany(Post::class, 'user_id');
