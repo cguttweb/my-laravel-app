@@ -13,32 +13,32 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
 
-    public function storeAvatar(Request $request){
-        // file references the file field name in avatar form
-        // $request->file('avatar')->store('public/images');
+    public function storeAvatar(Request $request) {
+        // $request->file('avatar')->store('public/avatars');
         $request->validate([
             'avatar' => 'required|image|max:3000'
         ]);
 
         $user = auth()->user();
+        
+        $filename = $user->id . '-' . uniqid() . '.jpg';
 
-        $avatarname = $user->id . '-' . uniqid() . '.jpg';
-
-        $imageData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
-        Storage::put('public/images/avatars/' . $avatarname, $imageData);
+        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg'); 
+        Storage::put('public/avatars/' . $filename, $imgData);
 
         $oldAvatar = $user->avatar;
 
-        $user->avatar = $avatarname;
+        $user->avatar = $filename;
         $user->save();
-        // php artisan storage:link to setup symbolic link
 
         if ($oldAvatar != "/fallback-avatar.jpg") {
+            // 1st arg = what you're trying to replace 2nd arg = what you want to replace it with and 3rd arg = string of text to perform replacement on
             Storage::delete(str_replace("/storage/", "public/", $oldAvatar));
-
-            return back()->with('success', 'Avatar successfully updated');
         }
+
+        return back()->with('success', 'Avatar successfully updated');
     }
+
 
     public function showAvatarForm(){
         return view('avatar-form');
@@ -51,7 +51,7 @@ class UserController extends Controller
             $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
         }
 
-        View::share('sharedData', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'postCount' => $user->posts()->count()]);
+        View::share('sharedData', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'postCount' => $user->posts()->count(), 'followersCount' => $user->followers()->count(), 'followingCount' => $user->followingUsers()->count()]);
     }
 
     public function profile(User $user){
@@ -62,12 +62,12 @@ class UserController extends Controller
 
     public function profileFollowers(User $user){
         $this->getSharedData($user);
-        return view('profile-followers', ['posts' => $user->posts()->latest()->get()]);
+        return view('profile-followers', ['followers' => $user->followers()->latest()->get()]);
     }
 
     public function profileFollowing(User $user){
         $this->getSharedData($user);
-        return view('profile-following', ['posts' => $user->posts()->latest()->get()]);
+        return view('profile-following', ['following' => $user->followingUsers()->latest()->get()]);
     }
 
     public function logout(){

@@ -26,7 +26,7 @@ class User extends Authenticatable
     // an accessor
     protected function avatar(): Attribute {
         return Attribute::make(get: function($value){
-            return $value ? '/storage/images/avatars/' . $value : '/fallback-avatar.jpg';
+            return $value ? '/storage/avatars/' . $value : '/fallback-avatar.jpg';
         });
     }
 
@@ -52,5 +52,14 @@ class User extends Authenticatable
     public function posts(){
         // user has many posts relationship
         return $this->hasMany(Post::class, 'user_id');
+    }
+
+    public function followers(){
+        // can add 3rd argument for local key but in most cases it will be id and is therefore not needed
+      return $this->hasMany(Follow::class, 'followeduser');
+    }
+
+    public function followingUsers(){
+        return $this->hasMany(Follow::class, 'user_id');
     }
 }
