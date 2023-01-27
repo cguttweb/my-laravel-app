@@ -83,14 +83,10 @@ class UserController extends Controller
         if (auth()->check()) {
             return view('homepage-feed', ['posts' => auth()->user()->feedPosts()->latest()->paginate(3)]);
         } else {
-            // if (Cache::has('postCount')) {
-            //     $postCount = Cache::get('postCount');
-            // } else {
-            //     sleep(4);
-            //     $postCount = Post::count();
-            //     Cache::put('postCount', $postCount, 30);
-            // }
-            
+            // 1st = key/lavel in cache 2nd how many seconds to remember 3rd function if data not in cache
+            $postCount = Cache::remember('postCount', 20, function(){
+                return Post::count();
+            });
             return view('homepage', ['postCount' => $postCount]);
         }
     }
