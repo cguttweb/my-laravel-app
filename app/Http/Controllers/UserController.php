@@ -105,6 +105,22 @@ class UserController extends Controller
         return redirect('/')->with('success', 'Your account has been successfully created');
     }
 
+    public function loginApi(Request $request){
+        $incomingFields = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if (auth()->attempt($incomingFields)) {
+            // if yes return personal access tokens
+            $user = User::where('username', $incomingFields['username'])->first();
+            $token = $user->createToken('apptoken')->plainTextToken;
+            return $token;
+        }
+
+        return '';
+    }
+
     public function login(Request $request){
         $incomingFields = $request->validate([
             'loginusername' => 'required',
